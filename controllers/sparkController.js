@@ -26,7 +26,7 @@ spark.get("/:id", async (req, res) => {
     let user = await getOneUser(req.params.id);
     let tasks = await getUserTasks(req.params.id);
     user = [...user, ...tasks];
-    // console.log(stringValidator(user[0]));
+    // console.log(stringValidator(user));
     res.json(user);
   } catch (error) {
     res.status(400).json({ error: `An error occured: ${error}` });
@@ -36,11 +36,11 @@ spark.get("/:id", async (req, res) => {
 spark.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedSnack = await deleteUser(id);
-    res.json(deletedSnack);
+    const deleteaUser = await deleteUser(id);
+    res.json(deleteaUser);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: "Something went wrong!" });
+    res.status(400).json({ error: `An error occured: ${error}` });
   }
 });
 
