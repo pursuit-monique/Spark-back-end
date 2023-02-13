@@ -4,10 +4,13 @@ const spark = express.Router();
 const {
   getAllUsers,
   getOneUser,
+  getUserTasks,
   updateUser,
   deleteUser,
   newUser,
 } = require("../querys/spark");
+
+const { stringValidator } = require("./functions/validation");
 
 spark.get("/", async (req, res) => {
   try {
@@ -19,16 +22,40 @@ spark.get("/", async (req, res) => {
 });
 
 spark.get("/:id", async (req, res) => {
-  console.log(req.params);
   try {
-    const user = await getOneUser(req.params.id);
+    let user = await getOneUser(req.params.id);
+    let tasks = await getUserTasks(req.params.id);
+    user = [...user, ...tasks];
+    // console.log(stringValidator(user[0]));
     res.json(user);
   } catch (error) {
     res.status(400).json({ error: `An error occured: ${error}` });
   }
 });
 
-spark.put("/", async (req, res) => {
+spark.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedSnack = await deleteUser(id);
+    res.json(deletedSnack);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "Something went wrong!" });
+  }
+});
+
+spark.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedUser = await updateUser(id, req.body);
+    res.json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "Cannot update." });
+  }
+});
+
+spark.post("/", async (req, res) => {
   try {
     const user = await newUser(req.body);
     res.json(user);

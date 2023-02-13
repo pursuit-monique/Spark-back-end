@@ -2,8 +2,19 @@ const db = require("../db/dbConfig.js");
 
 const getAllUsers = async () => await db.any("SELECT * FROM users");
 
+// const getAllUsers = async () =>
+//   await db.any(
+//     "SELECT users.id, name, about, profile, mood, theme, blocker_main, blockerlist, task.task, task.is_complete FROM users JOIN tasks ON users.id= tasks.user_id"
+//   );
+
 const getOneUser = async (id) =>
-  await db.one("SELECT * FROM users WHERE id=$1", id);
+  await db.any("SELECT * FROM users WHERE id=$1", id);
+
+const getUserTasks = async (id) =>
+  await db.any(
+    "SELECT goals.name, tasks.task, tasks.is_complete FROM users JOIN tasks ON users.id=tasks.user_id JOIN goals ON tasks.goal_id=goals.id WHERE users.id=$1",
+    id
+  );
 
 const updateUser = async (id, user) => {
   const { name, about, profile, mood, theme, blocker_main, blockerlist } = user;
@@ -34,6 +45,7 @@ const newUser = async (user) =>
 module.exports = {
   getAllUsers,
   getOneUser,
+  getUserTasks,
   deleteUser,
   updateUser,
   newUser,
