@@ -6,10 +6,18 @@ CREATE DATABASE spark_dev;
 CREATE TABLE users (
     id SERIAL UNIQUE PRIMARY KEY,
     name VARCHAR(30),
+    gender VARCHAR(30),
     about VARCHAR(255),
     profile VARCHAR(255),
     mood VARCHAR(30),
     theme VARCHAR(30),
+    has_tasks BOOLEAN,
+    has_blockers BOOLEAN
+);
+
+CREATE TABLE blockers (
+    id SERIAL UNIQUE PRIMARY KEY,
+    user_id INT,
     blocker_main VARCHAR(255),
     blockerlist VARCHAR(255)
 );

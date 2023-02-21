@@ -3,8 +3,10 @@ const spark = express.Router();
 
 const {
   getAllUsers,
+  userTables,
   getOneUser,
   getUserTasks,
+  getUserBlockers,
   updateUser,
   deleteUser,
   newUser,
@@ -21,12 +23,39 @@ spark.get("/", async (req, res) => {
   }
 });
 
+spark.get("/tables", async (req, res) => {
+  try {
+    const users = await userTables();
+    res.json(users);
+  } catch (error) {
+    res.status(400).json({ error: `An error occured: ${error}` });
+  }
+});
+
+spark.get("/tasks/:id", async (req, res) => {
+  try {
+    let tasks = await getUserTasks(req.params.id);
+    user = [...tasks];
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: `An error occured: ${error}` });
+  }
+});
+
+spark.get("/blockers/:id", async (req, res) => {
+  try {
+    let blockers = await getUserBlockers(req.params.id);
+    user = [...blockers];
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: `An error occured: ${error}` });
+  }
+});
+
 spark.get("/:id", async (req, res) => {
   try {
     let user = await getOneUser(req.params.id);
-    let tasks = await getUserTasks(req.params.id);
-    user = [...user, ...tasks];
-    // console.log(stringValidator(user));
+    user = [...user];
     res.json(user);
   } catch (error) {
     res.status(400).json({ error: `An error occured: ${error}` });
@@ -56,11 +85,13 @@ spark.put("/:id", async (req, res) => {
 });
 
 spark.post("/", async (req, res) => {
+  console.log("In POST");
   try {
     const user = await newUser(req.body);
+    console.log("Console.log " + user);
     res.json(user);
   } catch (error) {
-    console.log(req.body);
+    console.log("BODY: ", req.body);
     res.status(400).json({ error: `Something went wrong: ${req.body}` });
   }
 });
